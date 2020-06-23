@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kingstar.model.dao.DataMapper">
+    <insert id="insertBatchItems" parameterType="com.kingstar.model.entity.Item">
+        insert into jd_item (title,url)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.title}, #{item.url})
+        </foreach>
+    </insert>
+    <!--  批量插入种类名称  -->
+    <insert id="insertBatchCategory" parameterType="java.lang.String">
+        insert into jd_category (name)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item})
+        </foreach>
+    </insert>
+    <!--  清空分类列表信息  -->
+    <delete id="clearCategoryList">
+        delete from jd_category
+    </delete>
+
+    <select id="getAllCategoryName" resultType="java.lang.String">
+        select category.name from jd_category as category
+    </select>
+    <select id="querySelectiveItemList" resultType="com.kingstar.model.entity.Item">
+        select id,title,url
+        from jd_item
+        where title like CONCAT(CONCAT('%', trim(#{title,jdbcType=VARCHAR})), '%')
+        limit #{start},#{pageLength}
+    </select>
+    <select id="queryTotalItem" resultType="java.lang.Long">
+        select count(id)
+        from jd_item
+    </select>
+</mapper>
